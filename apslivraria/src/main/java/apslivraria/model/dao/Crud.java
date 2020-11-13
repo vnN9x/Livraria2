@@ -233,4 +233,15 @@ public class Crud implements Model{
 			session.close();
 		}
 	}
+	
+	 public List<Livro> findByNome(String titulo) {
+		List <Livro> livros = new ArrayList<Livro>();
+		for (Livro livro: findAllBooks()) {
+			if (livro.getTitulo().equals(titulo)) {
+				livros.add(livro);
+			}
+		}
+	       
+	    return livros;
+	 }
 }
