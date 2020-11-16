@@ -1,5 +1,6 @@
 package apslivraria.model.dao;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Crud implements Model{
 		}	
 	
 	//adiciona um objeto livro no banco de dados
-	public void addLivro(Livro livro, List <Long> autoresId, long idEditora) {
+	public void addLivro(Livro livro, List <Long> autoresId) {
 		Session session = getCurrentSessionFromJPA().openSession();
 		Transaction tx = null;
 		Editora editora = null;
@@ -47,7 +48,7 @@ public class Crud implements Model{
 				autor.setLivros(livros);
 				session.update(autor);
 			}
-			editora = getEditoraById(idEditora);
+			editora = getEditoraById(livro.getEditoraId());
 			editora.setLivros(livros);
 			livro.setAutores(autores);
 			livro.setEditora(editora);
@@ -234,14 +235,44 @@ public class Crud implements Model{
 		}
 	}
 	
-	 public List<Livro> findByNome(String titulo) {
-		List <Livro> livros = new ArrayList<Livro>();
-		for (Livro livro: findAllBooks()) {
-			if (livro.getTitulo().equals(titulo)) {
+	 public List<Livro> buscarLivro(String titulo){
+		 titulo = formataString(titulo);
+		 List <Livro> livros = new ArrayList<Livro>();
+		 for (Livro livro: findAllBooks()) {
+			if (formataString(livro.getTitulo()).equals(titulo)) {
 				livros.add(livro);
 			}
-		}
-	       
+		}     
 	    return livros;
 	 }
+	 
+	 public List<Autor> buscarAutor(String nome){
+		 nome = formataString(nome);
+		 List <Autor> autores = new ArrayList<Autor>();
+		 for (Autor autor: findAllAuthors()) {
+			 String escritor = autor.getNome() + autor.getSobrenome();
+			if (formataString(escritor).equals(nome)) {
+				autores.add(autor);
+			}
+		}     
+	    return autores;
+	 }
+	 
+	 public List<Editora> buscarEditora(String nome){
+		 nome = formataString(nome);
+		 List <Editora> editoras = new ArrayList<Editora>();
+		 for (Editora editora: findAllPublishers()) {
+			if (formataString(editora.getNome()).equals(nome)) {
+				editoras.add(editora);
+			}
+		}     
+	    return editoras;
+	 }
+	 
+	 public String formataString(String str) {
+		 Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+		 str = str.trim();
+		 str = str.toLowerCase();
+		    return str;
+		}
 }

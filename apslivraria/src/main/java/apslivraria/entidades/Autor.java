@@ -12,7 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "autor")
+@Table(name = "Authors")
 public class Autor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +58,7 @@ public class Autor {
 	}
 	@Override
 	public String toString() {
-		return "Id: " + autorId + ", Nome: " + nome + ", Sobrenome: " + sobrenome + "";
+		return "Id: " + autorId + ", Nome: " + nome + ", Sobrenome: " + sobrenome + "\n";
 	}
 	
 		

@@ -6,21 +6,24 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "livro")
+@Table(name = "Books")
 public class Livro {
-	@Id
-	private String isbn;
+	
 	@Column(name = "titulo")
 	private String titulo;
+	@Id
+	private String isbn;
+	@Column(name = "editora_id")
+	private long editoraId;
 	@Column(name = "preco")
 	private double preco;
 	
 	@ManyToOne()
 	private Editora editora;
-	
 	@ManyToMany()
 	private List <Autor> autores;
 	
@@ -42,10 +45,17 @@ public class Livro {
 
 	public Livro() {}
 	
-	public Livro(String isbn, String titulo, double preco) {
+	public Livro(String titulo, String isbn, long editoraId, double preco) {
 		this.isbn = isbn;
 		this.titulo = titulo;
 		this.preco = preco;
+		this.editoraId = editoraId;
+	}
+	public long getEditoraId() {
+		return editoraId;
+	}
+	public void setEditoraId(long editoraId) {
+		this.editoraId = editoraId;
 	}
 	
 	public String getIsbn() {
@@ -69,7 +79,7 @@ public class Livro {
 
 	@Override
 	public String toString() {
-		return "ISBN: " + isbn + ", Titulo: " + titulo + ", Preço: " + preco + "";
+		return "ISBN: " + isbn + ", Titulo: " + titulo + ", Preço: " + preco + "\n";
 	}
 
 	

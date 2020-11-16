@@ -1,13 +1,23 @@
 package apslivraria.controller;
 
-import java.util.List;
-
-import apslivraria.entidades.Livro;
 import apslivraria.model.Model;
+import apslivraria.model.dao.Crud;
+import apslivraria.view.View;
 
 public class Controlador {
-	Model model;
-	public Controlador(Model model) {
+	private Model model;
+	private View view;
+	
+	public Controlador(View view, Model model) {
+		this.view = view;
 		this.model = model;
+		view.JanelaPrincipal(model);
+
 	}
+	
+	public void init() {
+		view.JanelaPrincipal(new Crud());
+	}
+	
+//	JanelaPrincipal minhaJanela = new JanelaPrincipal(crud);}
 }	
