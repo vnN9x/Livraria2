@@ -3,6 +3,7 @@ package apslivraria.view;
 import apslivraria.*;
 import apslivraria.entidades.*;
 import apslivraria.model.Model;
+import apslivraria.model.dao.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -96,11 +97,6 @@ public class JanelaPrincipal extends JFrame{
 	List<Livro> exclui_list_livros;
 	List<Autor> exclui_list_autores;
 
-	// Listas "globais"(serão usadas em todas as 'tabs') de busca
-	List<Autor> tst_autores_list = new ArrayList<Autor>();
-	List<Editora> tst_editoras_list = new ArrayList<Editora>();
-	List<Livro> tst_livros_list = new ArrayList<Livro>();
-
 	private JanelaPrincipal(Model m1) {
 		createGUI(m1);
 		setDisplay();
@@ -167,14 +163,40 @@ public class JanelaPrincipal extends JFrame{
 				busca_jpanel_return_results.removeAll();
 
 				if (busca_jcheckbox_select_autor.isSelected()) {
-					// find by nome
+					busca_jpanel_return_results.removeAll();
+					// talvez mudar o findbyAutor
+					List<Autor> results = model.findbyAutor(busca_jtextfield_input.getText());
+
+					for (Autor author : results) {
+						busca_jpanel_return_results.add(new JLabel(author.toString()));
+					}
+
+					busca_jpanel_return_results.revalidate();
+					busca_jpanel_return_results.repaint();
 
 				} else if (busca_jcheckbox_select_livro.isSelected()) {
-					//find by nome
+					busca_jpanel_return_results.removeAll();
+
+					List<Livro> results = model.findByNome(busca_jtextfield_input.getText());
+
+					for (Livro book : results) {
+						busca_jpanel_return_results.add(new JLabel(book.toString()));
+					}
+
+					busca_jpanel_return_results.revalidate();
+					busca_jpanel_return_results.repaint();
 
 				} else if (busca_jcheckbox_select_editora.isSelected()) {
-					// find by nome
+					busca_jpanel_return_results.removeAll();
+					// talvez mudar o findbyEditora
+					List<Editora> results = model.findbyEditora(busca_jtextfield_input.getText());
 
+					for (Editora publisher : results) {
+						busca_jpanel_return_results.add(new JLabel(publisher.toString()));
+					}
+
+					busca_jpanel_return_results.revalidate();
+					busca_jpanel_return_results.repaint();
 				}
 
 				busca_jpanel_return_results.revalidate();
@@ -215,8 +237,6 @@ public class JanelaPrincipal extends JFrame{
 
 		//altera_jpanel_livro_horizontal_alignment_group
 		Map<JComboBox, Boolean> altera_map_jcombobox_boolean_todas_opcoes_jcomboboxes_autor = new LinkedHashMap<>();
-
-		List<Autor> tst_autores_list_altera = new ArrayList<Autor>();
 
 		JComboBox altera_jcombobox_opcoes_autor = new JComboBox(new DefaultComboBoxModel(altera_vector_autor_combobox_itens));
 		JComboBox altera_jcombobox_opcoes_editora = new JComboBox(new DefaultComboBoxModel(altera_vector_editora_combobox_itens));
@@ -285,12 +305,12 @@ public class JanelaPrincipal extends JFrame{
 		//Vector inclui_vector_combobox_opcoes_autor = new Vector();
 		
 		altera_vector_editora_combobox_itens.add(null);
-		for (Editora editora : tst_editoras_list) {
+		for (Editora editora : model.findAllPublishers()) {
 			altera_vector_editora_combobox_itens.add(editora);
 		}
 
 		altera_vector_autor_combobox_itens.add(null);
-		for (Autor autor : tst_autores_list) {
+		for (Autor autor : model.findAllAuthors()) {
 			altera_vector_autor_combobox_itens.add(autor);
 		}
 
@@ -300,7 +320,7 @@ public class JanelaPrincipal extends JFrame{
 
 		altera_jcombobox_opcoes_autor.setAlignmentX(CENTER_ALIGNMENT);
 		altera_jcombobox_opcoes_autor.setMaximumSize(busca_jtextfield_input.getPreferredSize());
-		altera_jcombobox_opcoes_autor.addActionListener(new inclui_action_listener(altera_map_jcombobox_boolean_todas_opcoes_jcomboboxes_autor, altera_jpanel_livro_horizontal_alignment_group, tst_autores_list, busca_jtextfield_input));
+		altera_jcombobox_opcoes_autor.addActionListener(new inclui_action_listener(altera_map_jcombobox_boolean_todas_opcoes_jcomboboxes_autor, altera_jpanel_livro_horizontal_alignment_group, model.findAllAuthors(), busca_jtextfield_input));
 
 		altera_jpanel_livro_horizontal_alignment_group.add(altera_jcombobox_opcoes_autor);
 
@@ -446,7 +466,6 @@ public class JanelaPrincipal extends JFrame{
 						}
 					}
 
-					//TODO: receber preço do livro
 				} else if (altera_jcheckbox_select_livro.isSelected()) {
 					List<Livro> all_books_list = model.findAllBooks();
 					for (JRadioButton chosen_button : altera_list_jradiobuttons) {
@@ -455,7 +474,7 @@ public class JanelaPrincipal extends JFrame{
 							for (Livro y_book : all_books_list) {
 								if (y_book.getIsbn().equals((String)chosen_button.getText())) {
 									String y_book_isbn = y_book.getIsbn();
-									double book_price;
+									double book_price = 0;
 									try {
 										book_price = Double.parseDouble(altera_jtextfield_livro_preco.getText());
 									} catch (Exception ee) {
@@ -604,13 +623,13 @@ public class JanelaPrincipal extends JFrame{
 		inclui_jpanel_mother_panel_livro.add(inclui_jpanel_livro_alinhamento_horizontal);
 
 		// Populando o combobox de seleção da editora
-		for (Editora editora : tst_editoras_list) {
+		for (Editora editora : model.findAllPublishers()) {
 			inclui_vector_combobox_opcoes_editora.add(editora);
 		}
 
 		// Populando o combobox de seleção dos autores
 		inclui_vector_combobox_opcoes_autor.add(null);
-		for (Autor autor : tst_autores_list) {
+		for (Autor autor : model.findAllAuthors()) {
 			inclui_vector_combobox_opcoes_autor.add(autor);
 		}
 
@@ -694,7 +713,7 @@ public class JanelaPrincipal extends JFrame{
 					// Achando objeto Editora com nome igual ao selecionado e o atribuindo a 'selected_publisher'
 					List<Editora> all_publisher_list = model.findAllPublishers();
 					List<Editora> going_to_be_used_publisher_list = new ArrayList<Editora>();
-					Editora selected_publisher;
+					Editora selected_publisher = null;
 					String selected_publisher_name = (String)inclui_jcombobox_opcoes_editora.getSelectedItem();
 					for (Editora x_publisher : all_publisher_list) {
 						String x_publisher_name = x_publisher.getNome();
@@ -703,14 +722,13 @@ public class JanelaPrincipal extends JFrame{
 							selected_publisher = x_publisher;
 						}
 					}
-					double book_price;
+					double book_price = 0;
 					try {
 						book_price = Double.parseDouble(inclui_jtextfield_livro_preco.getText());
 					} catch (Exception ee) {
 						ee.printStackTrace();
 					}
 
-					// TODO:receber preco do livro
 					// Criando objetos e os passando como parametro para o model
 					model.addLivro(new Livro(inclui_jtextfield_livro_isbn.getText(), inclui_jtextfield_livro_nome.getText(), book_price), authors_ids, selected_publisher.getEditoraId());
 
@@ -720,7 +738,7 @@ public class JanelaPrincipal extends JFrame{
 			}
 		});
 
-		inclui_jcombobox_opcoes_autor.addActionListener(new inclui_action_listener(inclui_map_jcombobox_boolean_todos_jcomboboxes_de_autor, inclui_jpanel_autores_comboboxes_wrapper, tst_autores_list, busca_jtextfield_input));
+		inclui_jcombobox_opcoes_autor.addActionListener(new inclui_action_listener(inclui_map_jcombobox_boolean_todos_jcomboboxes_de_autor, inclui_jpanel_autores_comboboxes_wrapper, model.findAllAuthors(), busca_jtextfield_input));
 
 		// Adicionando tudo ao painel principal
 		panel.add(inclui_jbutton_run);
@@ -789,8 +807,6 @@ public class JanelaPrincipal extends JFrame{
 
 						exclui_list_jradiobutton_result.add(crnt_autor_button);
 						exclui_jpanel_return_busca_results.add(crnt_autor_button);
-
-						System.out.println(crnt_autor);
 					}
 
 				} else if (exclui_jcheckbox_select_livro.isSelected()) {
@@ -804,8 +820,6 @@ public class JanelaPrincipal extends JFrame{
 
 						exclui_list_jradiobutton_result.add(crnt_livro_button);
 						exclui_jpanel_return_busca_results.add(crnt_livro_button);
-
-						System.out.println(crnt_livro);
 					}
 
 				} else if (exclui_jcheckbox_select_editora.isSelected()) {
@@ -819,8 +833,6 @@ public class JanelaPrincipal extends JFrame{
 
 						exclui_list_jradiobutton_result.add(crnt_editora_button);
 						exclui_jpanel_return_busca_results.add(crnt_editora_button);
-
-						System.out.println(crnt_editora);
 					}
 				}
 
