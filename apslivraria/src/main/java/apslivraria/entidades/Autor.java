@@ -58,7 +58,7 @@ public class Autor {
 	}
 	@Override
 	public String toString() {
-		return "Id: " + autorId + ", Nome: " + nome + ", Sobrenome: " + sobrenome + "\n";
+		return "Nome: " + nome + ", Sobrenome: " + sobrenome + "\n";
 	}
 	
 		

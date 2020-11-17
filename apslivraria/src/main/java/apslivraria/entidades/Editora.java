@@ -69,7 +69,7 @@ public class Editora {
 
 	@Override
 	public String toString() {
-		return "Id: " + editoraId + ", Nome: " + nome + ", Site: " + site + "";
+		return "Nome: " + nome + ", Site: " + site + "\n";
 	}
 	
 	

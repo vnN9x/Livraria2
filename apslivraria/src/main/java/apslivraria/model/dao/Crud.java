@@ -250,8 +250,9 @@ public class Crud implements Model{
 		 nome = formataString(nome);
 		 List <Autor> autores = new ArrayList<Autor>();
 		 for (Autor autor: findAllAuthors()) {
-			 String escritor = autor.getNome() + autor.getSobrenome();
-			if (formataString(escritor).equals(nome)) {
+			 String escritor = autor.getNome() +" "+ autor.getSobrenome();
+			if (formataString(escritor).equals(nome) || formataString(autor.getNome()).equals(nome) || 
+					formataString(autor.getSobrenome()).equals(nome)) {
 				autores.add(autor);
 			}
 		}     
@@ -260,7 +261,7 @@ public class Crud implements Model{
 	 
 	 public List<Editora> buscarEditora(String nome){
 		 nome = formataString(nome);
-		 List <Editora> editoras = new ArrayList<Editora>();
+		 List <Editora> editoras = new ArrayList<Editora>() ;
 		 for (Editora editora: findAllPublishers()) {
 			if (formataString(editora.getNome()).equals(nome)) {
 				editoras.add(editora);
